@@ -122,7 +122,7 @@ public class BuyItemGui extends VexGui {
 
 									/* 从数据库删除物品 */
 									if (Main.DataSaveType.equalsIgnoreCase("mysql")) {
-										if (ShopItemManager.BuyItems(infos, infos.getItem_Number())) {
+										if (ShopItemManager.BuyItems_down(infos, infos.getItem_Number())) {
 											Utils.sendMsg(player, "§a§l下架成功，请查看背包！");
 											/* 将物品发送到背包 */
 											player.getInventory().addItem(mojangson);
@@ -130,7 +130,7 @@ public class BuyItemGui extends VexGui {
 											Utils.sendMsg(player, "§c§l 数据库出错，请联系作者！");
 										}
 									} else {
-										if (SQLManager.BuyItems(infos, infos.getItem_Number())) {
+										if (SQLManager.BuyItems_down(infos, infos.getItem_Number())) {
 											Utils.sendMsg(player, "§a§l下架成功，请查看背包！");
 											/* 将物品发送到背包 */
 											player.getInventory().addItem(mojangson);
