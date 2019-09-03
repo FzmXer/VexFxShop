@@ -49,7 +49,7 @@ public class SQLManager {
 			PreparedStatement presta = conn.prepareStatement(sql);
 			return presta.execute();
 		} catch (SQLException e) {
-			Utils.Msg(ChatColor.RED + "创建 " + shopname +" 数据表失败，详细信息：" + e.getErrorCode() + "\n" + e.getMessage());
+			Utils.Msg(ChatColor.RED + "创建 " + shopname + " 数据表失败，详细信息：" + e.getErrorCode() + "\n" + e.getMessage());
 		}
 		return false;
 	}
@@ -60,7 +60,7 @@ public class SQLManager {
 			String sql = "INSERT INTO " + info.getShop_Name() + Utils.Table_Pres;
 			conn = getConnection();
 			PreparedStatement presta = conn.prepareStatement(sql);
-			
+
 			presta.setString(1, info.getItem_Type());
 			presta.setString(2, info.getItem_Name());
 			presta.setString(3, info.getItem_Lore());
@@ -77,7 +77,7 @@ public class SQLManager {
 			presta.setString(12, info.getShop_Name());
 
 			presta.setInt(13, info.getItem_Number());
-			
+
 			presta.execute();
 			return true;
 		} catch (SQLException e) {
@@ -86,7 +86,7 @@ public class SQLManager {
 
 		return false;
 	}
-	
+
 	public static boolean BuyItems(ItemInfo infos, int BuyNumber) {
 		try {
 			/* 获取数据库的连接 */
@@ -100,7 +100,7 @@ public class SQLManager {
 			ResultSet rs = presta.getResultSet();
 			while (rs.next()) {
 				if (rs.getInt("item_number") - BuyNumber <= 0) {
-					if(rs.getInt("item_number") != -1) {
+					if (rs.getInt("item_number") != -1) {
 						return DelItems(rs.getInt("id"), infos.getShop_Name());
 					}
 					return true;
@@ -120,7 +120,27 @@ public class SQLManager {
 		}
 		return false;
 	}
-	
+
+	public static boolean BuyItems_down(ItemInfo infos, int BuyNumber) {
+		try {
+			/* 获取数据库的连接 */
+			Connection conn = getConnection();
+			String sql = "SELECT * FROM " + infos.getShop_Name() + " where item_type='" + infos.getItem_Type()
+					+ "'and item_dates='" + infos.getItem_Dates() + "'and player_name='" + infos.getPlayer_Name()
+					+ "'and player_uuid='" + infos.getPlayer_UUID() + "'";
+			/* 预处理sql语句 */
+			PreparedStatement presta = conn.prepareStatement(sql);
+			presta.execute();
+			ResultSet rs = presta.getResultSet();
+			while (rs.next()) {
+				return DelItems(rs.getInt("id"), infos.getShop_Name());
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public static boolean BuyItems_2(ItemInfo infos) {
 		try {
 			/* 获取数据库的连接 */
@@ -210,5 +230,5 @@ public class SQLManager {
 		}
 		return null;
 	}
-	
+
 }
