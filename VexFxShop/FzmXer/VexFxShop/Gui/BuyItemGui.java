@@ -169,9 +169,9 @@ public class BuyItemGui extends VexGui {
 							return;
 						}
 						/* 判断是否超过物品数量，超过则默认最大 */
-						if (buynb <= 0 || infos.getItem_Number() <= -1) {
+						if (buynb <= 0) {
 							buynb = 1;
-						} else if (buynb >= infos.getItem_Number()) {
+						} else if (buynb >= infos.getItem_Number() && infos.getItem_Number() != -1) {
 							buynb = infos.getItem_Number();
 						}
 						/* 根据NBT信息，生成物品 */
@@ -242,7 +242,6 @@ public class BuyItemGui extends VexGui {
 				} else {
 					/* 数据库删除物品 */
 					if (SQLManager.BuyItems(infos, sl)) {
-						player.sendMessage("111");
 						/* 如果玩家名与UUID 与数据库中的商品上架玩家保持一致，则直接获得物品 */
 						if (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
 								&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString())) {

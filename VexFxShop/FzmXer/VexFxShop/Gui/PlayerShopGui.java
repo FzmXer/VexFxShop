@@ -90,7 +90,7 @@ public class PlayerShopGui extends VexGui {
 					Main.syshopg.get(1).getList_list_y(), Main.syshopg.get(1).getList_list_w(),
 					Main.syshopg.get(1).getList_list_h(), Main.syshopg.get(1).getList_list_h()
 							+ ((Main.playerlist.size() - 4) * Main.syshopg.get(1).getList_itembg_h()));
-			int size;
+//			int size;
 			int y = 0;
 			for (ItemInfo info : Main.playerlist) {
 				/* 商品背景图 */
@@ -99,21 +99,21 @@ public class PlayerShopGui extends VexGui {
 						Main.syshopg.get(1).getList_itembg_w(), Main.syshopg.get(1).getList_itembg_h()));
 
 //				/* 商品显示贴图 */
-				size = Main.syshopg.get(0).getList_item_size();
-				String images;
+//				size = Main.syshopg.get(0).getList_item_size();
+//				String images;
 //				if (Main.syshopg.get(0).getList_item_image().contentEquals("minecraft:textures/items/")) {
 //					images = "minecraft:textures/items/" + info.getItem_Type().toString().toLowerCase() + ".png";
 //				} else {
-				images = Main.syshopg.get(0).getList_item_image();
+//				images = Main.syshopg.get(0).getList_item_image();
 //				}
 
 //				vsl.addComponent(new VexMcImage(images, Main.syshopg.get(0).getList_item_x(),
 //						Main.syshopg.get(0).getList_item_y() * y + Main.syshopg.get(0).getList_item_b(), size, size,
 //						size, size, size, size, size, size));
 
-				vsl.addComponent(
-						new VexImage(Utils.Path + images + info.getItem_Type().toString().toLowerCase() + ".png", 6,
-								26 * y + Main.syshopg.get(0).getList_item_b(), size, size));
+//				vsl.addComponent(
+//						new VexImage(Utils.Path + images + info.getItem_Type().toString().toLowerCase() + ".png", 6,
+//								26 * y + Main.syshopg.get(0).getList_item_b(), size, size));
 
 				/* 商品名 */
 				String item_names = "null";

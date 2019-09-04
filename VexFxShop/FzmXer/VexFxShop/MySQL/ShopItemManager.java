@@ -73,7 +73,7 @@ public class ShopItemManager {
 			ResultSet rs = presta.getResultSet();
 			while (rs.next()) {
 				if (rs.getInt("item_number") - BuyNumber <= 0) {
-					if(rs.getInt("item_number") != -1) {
+					if (rs.getInt("item_number") != -1) {
 						return DelItems(rs.getInt("id"), infos.getShop_Name());
 					}
 					return true;
@@ -87,6 +87,27 @@ public class ShopItemManager {
 					Main.reloadItemInfo(infos.getShop_Name());
 					return true;
 				}
+			}
+			MySQLManager.closeConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static boolean BuyItems_down(ItemInfo infos, int BuyNumber) {
+		try {
+			/* 获取数据库的连接 */
+			Connection conn = MySQLManager.linkConnection();
+			String sql = "SELECT * FROM " + infos.getShop_Name() + " where item_type='" + infos.getItem_Type()
+					+ "'and item_dates='" + infos.getItem_Dates() + "'and player_name='" + infos.getPlayer_Name()
+					+ "'and player_uuid='" + infos.getPlayer_UUID() + "'";
+			/* 预处理sql语句 */
+			PreparedStatement presta = conn.prepareStatement(sql);
+			presta.execute();
+			ResultSet rs = presta.getResultSet();
+			while (rs.next()) {
+				return DelItems(rs.getInt("id"), infos.getShop_Name());
 			}
 			MySQLManager.closeConnection();
 		} catch (SQLException e) {

@@ -40,7 +40,7 @@ public class MyCommand implements CommandExecutor {
 						sender.sendMessage("§a/fxs reload - 重载插件.");
 					} else if (sender.hasPermission("fzmxer.admin.vexfxshop.use")) {
 						sender.sendMessage("§a---------------------- [VexFxShop] ---------------------");
-						sender.sendMessage("§a/fxs open - 打开商店(P键).");
+						sender.sendMessage("§a/fxs open - 打开商店(ss, ps).");
 					} else {
 						sender.sendMessage("§c你没有权限！");
 					}
