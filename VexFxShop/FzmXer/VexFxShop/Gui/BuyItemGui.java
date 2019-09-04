@@ -97,7 +97,7 @@ public class BuyItemGui extends VexGui {
 		if (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
 				&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString())) {
 			/* 下架按钮 */
-			this.addComponent(new VexButton(0, Main.byd.getDown_text(), Utils.Path + Main.byd.getDown_image1(),
+			this.addComponent(new VexButton(1, Main.byd.getDown_text(), Utils.Path + Main.byd.getDown_image1(),
 					Utils.Path + Main.byd.getDown_image2(), Main.byd.getDown_x(), Main.byd.getDown_y(),
 					Main.byd.getDown_w(), Main.byd.getDown_h(), new ButtonFunction() {
 						@Override
