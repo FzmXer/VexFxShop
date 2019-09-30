@@ -1,0 +1,5 @@
+VexFxShop:
+ #如果物品的Lore中含有这个Lore，则禁止上架,中文请使用 '' 括起来
+  BanLore:
+    - FzmXer制作
+    - '灵魂绑定'

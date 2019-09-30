@@ -1,0 +1,84 @@
+VexFxShop:
+  Upitem-bg:
+    image: '[local]Upitem_Back.png'
+    x: -1
+    y: -1
+    w: 140
+    h: 191
+    xs: 240
+    ys: 191
+    slotLeft: 40
+    slotTop: 113
+  #插槽
+  Upitem-Slot:
+    x: 112
+    y: 30
+  Upitem-dj-show:
+    text: '§e单价'
+    x: 88
+    y: 52
+    fontsize: 0.6
+  #输入框
+  Upitem-Input:
+    x: 102
+    y: 50
+    w: 50
+    h: 8
+  #退出按钮
+  Upitem-exit:
+    image1: '[local]exit_1.png'
+    image2: '[local]exit_2.png'
+    x: 147
+    y: 23
+    w: 8
+    h: 8
+  #文本
+  Upitem-money-text:
+    text: '§e金币'
+    x: 102
+    y: 62
+    fontsize: 0.6
+  #多选按钮 金币
+  Upitem-money:
+    image1: '[local]check_1.png'
+    image2: '[local]check_2.png'
+    x: 94
+    y: 60
+    w: 8
+    h: 8
+  #文本
+  Upitem-point-text:
+    text: '§e点券'
+    x: 120
+    y: 62
+    fontsize: 0.6
+  #多选按钮 点券
+  Upitem-point:
+    image1: '[local]check_1.png'
+    image2: '[local]check_2.png'
+    x: 112
+    y: 60
+    w: 8
+    h: 8
+  Upitem-un-text:
+    text: '§e无限'
+    x: 138
+    y: 62
+    fontsize: 0.6
+  #多选按钮 无限
+  Upitem-un:
+    image1: '[local]check_1.png'
+    image2: '[local]check_2.png'
+    x: 130
+    y: 60
+    w: 8
+    h: 8
+  Upitem-ok:
+    text: '§e上架'
+    image1: '[local]Upitem.png'
+    image2: '[local]Upitem.png'
+    x: -1
+    y: 70
+    w: 24
+    h: 12
+  

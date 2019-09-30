@@ -1,0 +1,19 @@
+# ******************** #
+# Make: FzmXer         #
+# ******************** #
+VexFxShop:
+  #目前仅支持 mysql 与 sqlite，推荐使用mysql
+  DataSaveType: sqlite
+  #数据库地址
+  MySQL: 
+    IP: 127.0.0.1
+    UserName: fzmxer
+    PassWord: 123456
+    DatabaseName: fzmxer
+    Port: 3306
+  #系统商店，默认I键，为 -1 时为关闭
+  SystemShop: 23
+  #玩家商店，默认O键，为 -1 时为关闭
+  PlayerShop: 24
+ #手续费，玩家上架物品被购买时收取手续费，钱不够则无法上架 0 - 100  (默认商品总价的 5%)  PS:设置过高可能被玩家打死
+  brokerage: 5

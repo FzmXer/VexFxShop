@@ -1,0 +1,131 @@
+VexFxShop:
+  #界面背景
+  SystemShop-bg:
+    image: '[local]Shop_Back.png'
+    x: -1
+    y: -1
+    w: 240
+    h: 158
+    xs: 240
+    ys: 158
+  #界面标题
+  SystemShop-title:
+    text:  '§e§l系统商店'
+    x: 104
+    y: 3
+  #关闭按钮
+  SystemShop-exit:
+    image1: '[local]exit_1.png'
+    image2: '[local]exit_2.png'
+    x: 222
+    y: 8
+    w: 8
+    h: 8
+  SystemShop-info:
+    money:
+      image: '[local]Show.png'
+      x: 19
+      y: 135
+      w: 51
+      h: 14
+    money-text:
+      text: '§e金币'
+      x: 25
+      y: 139
+      fontsize: 0.6
+    point:
+      image: '[local]Show.png'
+      x: 72
+      y: 135
+      w: 51
+      h: 14
+    point-text:
+      text: '§e点券'
+      x: 78
+      y: 139
+      fontsize: 0.6
+  SystemShop-Upitem:
+    text: '§e上架'
+    image1: '[local]Upitem_Button.png'
+    image2: '[local]Upitem_Button.png'
+    x: 192
+    y: 132
+    w: 28
+    h: 16
+  #滚动列表框
+  SystemShop-list:
+    #列表框本身位置
+    list:
+      x: 20
+      y: 20
+      w: 200
+      h: 110
+      b: 0
+    #列表框内商品背景
+    item-bg:
+      image: '[local]Items_Show.png'
+      #自动进行递增，只需要设置初始值
+      x: 2
+      y: 26
+      w: 190
+      h: 26
+      b: 0
+    #商品显示图片,暂时只支持原版,也可自定义
+    item-image:
+      image: ''
+      x: 6
+      #自动进行递增，只需要设置初始值
+      y: 26
+      #位置如果不对，在这里进行补充 程序内公式为 y * 列表内位置 + b
+      b: 5
+      size: 15
+    item-name:
+      text: '§e§l商品名：'
+      x: 21
+      #自动进行递增，只需要设置初始值
+      y: 26
+      b: 3
+      fontsize: 0.8
+    #商品的单价
+    item-dj:
+      money:
+       text: '§e§l金币：'
+       x: 21
+       y: 26
+       b: 10
+       fontsize: 0.8
+      point:
+       text: '§e§l点券：'
+       x: 21
+       y: 26
+       b: 17
+       fontsize: 0.8
+    #商品的卖家
+    item-sname:
+      text: '§e§l卖家：'
+      x: 90
+      y: 26
+      b: 10
+      fontsize: 0.8
+    item-date:
+      text: '§e§l日期：'
+      x: 90
+      y: 26
+      b: 17
+      fontsize: 0.8
+    item-number:
+      text: '§e§l数量：'
+      x: 90
+      y: 26
+      b: 3
+      fontsize: 0.8
+    item-buy:
+      #不加§f 整个界面会变色
+      text: '§e 购买'
+      image1: '[local]button.png'
+      image2: '[local]button.png'
+      x: 164
+      y: 26
+      w: 24
+      h: 9
+      b: 2      

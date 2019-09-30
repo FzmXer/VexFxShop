@@ -1,0 +1,12 @@
+name: VexFxShop
+version: 1.6.2
+main: FzmXer.VexFxShop.Main.Main
+depend: 
+- VexView
+- Vault
+ 
+commands:
+    fxs:
+      description: Base command for the vexfxshop plugin.
+      permission: fzmxer.admin.vexfxshop.use
+      default: true

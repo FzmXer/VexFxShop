@@ -1,0 +1,89 @@
+VexFxShop:
+  #背景
+  Buyitem-bg:
+    image: '[local]Upitem_Item.png'
+    x: -1
+    y: -1
+    w: 100
+    h: 120
+    xs: 100
+    ys: 120
+  #3D预览框
+  Vexitemstack:
+    image: '[local]Describe.png'
+    h: 40
+  #插槽背景
+  Buyitem-Slot-image:
+    image: '[local]Upitem_Item.png'
+    x: 6
+    y: 6
+    w: 16
+    h: 16
+  #插槽
+  Buyitem-Slot:
+    x: 6
+    y: 6
+  #商品名
+  Buyitem-name:
+    text: '§e§l商品名:'
+    x: 6
+    y: 28
+    fontsize: 0.8
+  #商品数量
+  Buyitem-number:
+    text: '§e§l数  量: '
+    x: 6
+    y: 38
+    fontsize: 0.8
+  #单价(金币)
+  Buyitem-money:
+    text: '§e§l单  价: '
+    suffix: ' 金币'
+    x: 6
+    y: 48
+    fontsize: 0.8
+  #单价(点券)
+  Buyitem-point:
+    text: '§e§l单  价: '
+    suffix: ' 点券'
+    x: 6
+    y: 58
+    fontsize: 0.8
+  Buyitem-text:
+    text: '§e§l购  买: '
+    x: 6
+    y: 68
+    fontsize: 0.8
+  #输入框
+  Buyitem-input:
+    x: 35
+    y: 68
+    w: 30
+    h: 8
+  #返回
+  Buyitem-back:
+    text: '§e 返回 '
+    image1: '[local]button_.png'
+    image2: '[local]button_.png'
+    x: 2
+    y: 104
+    w: 24
+    h: 12
+  #下架
+  Buyitem-down:
+    text: '§e 下架 '
+    image1: '[local]button_.png'
+    image2: '[local]button_.png'
+    x: -1
+    y: 104
+    w: 24
+    h: 12
+  #购买
+  Buyitem-buy:
+    text: '§e 购买 '
+    image1: '[local]button_.png'
+    image2: '[local]button_.png'
+    x: 74
+    y: 104
+    w: 24
+    h: 12
