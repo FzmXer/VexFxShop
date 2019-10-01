@@ -1,6 +1,8 @@
 package FzmXer.VexFxShop.Gui;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -32,18 +34,18 @@ public class BuyItemGui extends VexGui {
 
 	public BuyItemGui(Main mian, Player player, ItemInfo infos) {
 		/* 设置背景图片 */
-		super(Utils.Path + Main.byd.getBg_image(), Main.byd.getBg_x(), Main.byd.getBg_y(), Main.byd.getBg_w(),
-				Main.byd.getBg_h(), Main.byd.getBg_xs(), Main.byd.getBg_ys());
+		super(Main.byd.getBg_image(), Main.byd.getBg_x(), Main.byd.getBg_y(), Main.byd.getBg_w(), Main.byd.getBg_h(),
+				Main.byd.getBg_xs(), Main.byd.getBg_ys());
 
 		/* 用nbt生成物品 */
 		ItemStack mojangson = NBTUtils.loadItemStackJson(infos.getItem_Nbts());
 		mojangson = VexItemStack.of(mojangson).previewItem() // 开启物品3D模型预览
-				.setBack(Utils.Path + Main.byd.getItemstack_image()) // 设置描述框的背景
+				.setBack(Main.byd.getItemstack_image()) // 设置描述框的背景
 				.setHeight(Main.byd.getItemstack_h()) // 设置描述框的最大高度(超出高度后将自动进行滚动显示)|
 				.build();
 		/* 添加物品槽，显示物品用 */
-		this.addComponent(new VexImage(Utils.Path + Main.byd.getSlot_image(), Main.byd.getSlot_image_x(),
-				Main.byd.getSlot_image_y(), Main.byd.getSlot_image_w(), Main.byd.getSlot_image_h()));
+		this.addComponent(new VexImage(Main.byd.getSlot_image(), Main.byd.getSlot_image_x(), Main.byd.getSlot_image_y(),
+				Main.byd.getSlot_image_w(), Main.byd.getSlot_image_h()));
 		this.addComponent(new VexSlot(0, Main.byd.getSlot_x(), Main.byd.getSlot_y(), mojangson));
 
 		this.addComponent(new VexText(Main.byd.getName_x(), Main.byd.getName_y(),
@@ -69,37 +71,44 @@ public class BuyItemGui extends VexGui {
 				Arrays.asList(
 						Main.byd.getMoney_text() + (infos.getItem_Money() * count) + Main.byd.getMoney_text_suffix()),
 				Main.byd.getMoney_fontsize()));
-		this.addComponent(new VexText(Main.byd.getPoint_x(), Main.byd.getPoint_y(),
-				Arrays.asList(
-						Main.byd.getPoint_text() + (infos.getItem_Point() * count) + Main.byd.getPoint_text_suffix()),
-				Main.byd.getPoint_fontsize()));
+		if (Main.isPoint) {
+			this.addComponent(new VexText(
+					Main.byd.getPoint_x(), Main.byd.getPoint_y(), Arrays.asList(Main.byd.getPoint_text()
+							+ (infos.getItem_Point() * count) + Main.byd.getPoint_text_suffix()),
+					Main.byd.getPoint_fontsize()));
+		}
 		this.addComponent(new VexText(Main.byd.getBuytext_x(), Main.byd.getBuytext_y(),
 				Arrays.asList(Main.byd.getBuytext_text()), Main.byd.getBuytext_fontsize()));
 		this.addComponent(new VexTextField(Main.byd.getInput_x(), Main.byd.getInput_y(), Main.byd.getInput_w(),
 				Main.byd.getInput_h(), 2, 401));
 
 		/* 返回按钮 */
-		this.addComponent(new VexButton(0, Main.byd.getBack_text(), Utils.Path + Main.byd.getBack_image1(),
-				Utils.Path + Main.byd.getBack_image2(), Main.byd.getBack_x(), Main.byd.getBack_y(),
-				Main.byd.getBack_w(), Main.byd.getBack_h(), new ButtonFunction() {
+		this.addComponent(new VexButton(0, Main.byd.getBack_text(), Main.byd.getBack_image1(),
+				Main.byd.getBack_image2(), Main.byd.getBack_x(), Main.byd.getBack_y(), Main.byd.getBack_w(),
+				Main.byd.getBack_h(), new ButtonFunction() {
 					@Override
 					public void run(Player player) {
 						/* 异步调用，减少卡服运算 */
 						new BukkitRunnable() {
 							@Override
 							public void run() {
-								VexViewAPI.openGui(player, new SystemShopGui(Main.instance, player));
+								if (infos.getShop_Name().equalsIgnoreCase("systemshop")) {
+									VexViewAPI.openGui(player, new SystemShopGui(Main.instance, player));
+								} else {
+									VexViewAPI.openGui(player, new PlayerShopGui(Main.instance, player));
+								}
 							}
 						}.runTaskAsynchronously(Main.instance);
 					}
 				}));
-		/* 如果卖家为自己 */
-		if (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
-				&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString())) {
+		/* 如果卖家为自己 或者 拥有管理权限 */
+		if ((infos.getPlayer_Name().equalsIgnoreCase(player.getName())
+				&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString()))
+				|| player.hasPermission("fzmxer.admin.vexfxshop.admin")) {
 			/* 下架按钮 */
-			this.addComponent(new VexButton(1, Main.byd.getDown_text(), Utils.Path + Main.byd.getDown_image1(),
-					Utils.Path + Main.byd.getDown_image2(), Main.byd.getDown_x(), Main.byd.getDown_y(),
-					Main.byd.getDown_w(), Main.byd.getDown_h(), new ButtonFunction() {
+			this.addComponent(new VexButton(1, Main.byd.getDown_text(), Main.byd.getDown_image1(),
+					Main.byd.getDown_image2(), Main.byd.getDown_x(), Main.byd.getDown_y(), Main.byd.getDown_w(),
+					Main.byd.getDown_h(), new ButtonFunction() {
 						@Override
 						public void run(Player player) {
 							/* 异步调用，减少卡服运算 */
@@ -123,6 +132,13 @@ public class BuyItemGui extends VexGui {
 									/* 从数据库删除物品 */
 									if (Main.DataSaveType.equalsIgnoreCase("mysql")) {
 										if (ShopItemManager.BuyItems_down(infos, infos.getItem_Number())) {
+											SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+											String time = format.format(Calendar.getInstance().getTime());
+											Utils.WLog(player.getName(),
+													time + ": " + " 玩家 " + player.getName() + " 下架了 "
+															+ infos.getItem_Number() + "个" + infos.getItem_Name()
+															+ " 单价 " + infos.getItem_Money() + "金币， "
+															+ infos.getItem_Point() + "点券。");
 											Utils.sendMsg(player, "§a§l下架成功，请查看背包！");
 											/* 将物品发送到背包 */
 											player.getInventory().addItem(mojangson);
@@ -131,6 +147,13 @@ public class BuyItemGui extends VexGui {
 										}
 									} else {
 										if (SQLManager.BuyItems_down(infos, infos.getItem_Number())) {
+											SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+											String time = format.format(Calendar.getInstance().getTime());
+											Utils.WLog(player.getName(),
+													time + ": " + " 玩家 " + player.getName() + " 下架了 "
+															+ infos.getItem_Number() + "个" + infos.getItem_Name()
+															+ " 单价 " + infos.getItem_Money() + "金币， "
+															+ infos.getItem_Point() + "点券。");
 											Utils.sendMsg(player, "§a§l下架成功，请查看背包！");
 											/* 将物品发送到背包 */
 											player.getInventory().addItem(mojangson);
@@ -138,19 +161,18 @@ public class BuyItemGui extends VexGui {
 											Utils.sendMsg(player, "§c§l 数据库出错，请联系作者！");
 										}
 									}
-
-									/* 关闭背包界面 */
-									player.closeInventory();
 								}
 							}.runTaskAsynchronously(Main.instance);
+							/* 关闭背包界面 */
+							player.closeInventory();
 						}
 					}));
 		}
 
 		/* 购买按钮 */
-		this.addComponent(new VexButton(2, Main.byd.getBuy_text(), Utils.Path + Main.byd.getBuy_image1(),
-				Utils.Path + Main.byd.getBuy_image2(), Main.byd.getBuy_x(), Main.byd.getBuy_y(), Main.byd.getBuy_w(),
-				Main.byd.getBuy_h(), new ButtonFunction() {
+		this.addComponent(new VexButton(2, Main.byd.getBuy_text(), Main.byd.getBuy_image1(), Main.byd.getBuy_image2(),
+				Main.byd.getBuy_x(), Main.byd.getBuy_y(), Main.byd.getBuy_w(), Main.byd.getBuy_h(),
+				new ButtonFunction() {
 					@Override
 					public void run(Player player) {
 						/* 取玩家背包第一个空位 */
@@ -181,19 +203,39 @@ public class BuyItemGui extends VexGui {
 
 						if (hasMoeny(player, infos, buynb)) {
 							Utils.sendMsg(player, "§a§l购买成功，请查看背包！");
+							SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+							String time = format.format(Calendar.getInstance().getTime());
+							Utils.WLog(player.getName(),
+									time + ": " + " 玩家 " + player.getName() + " 购买了 " + buynb + "个"
+											+ infos.getItem_Name() + " 单价 " + infos.getItem_Money() + "金币， "
+											+ infos.getItem_Point() + "点券 -- 卖家 " + infos.getPlayer_Name());
+							Utils.sendMsg(player, "§a§l购买成功，请查看背包！");
 							/* 将物品发送到背包 */
 							player.getInventory().addItem(mojangson);
 						} else {
-							if (hasPoint(player, infos, buynb)) {
-								Utils.sendMsg(player, "§a§l购买成功，请查看背包！");
-								/* 将物品发送到背包 */
-								player.getInventory().addItem(mojangson);
+							if (Main.isPoint) {
+								if (hasPoint(player, infos, buynb)) {
+									Utils.sendMsg(player, "§a§l购买成功，请查看背包！");
+									SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+									String time = format.format(Calendar.getInstance().getTime());
+									Utils.WLog(player.getName(),
+											time + ": " + " 玩家 " + player.getName() + " 购买了 " + buynb + "个"
+													+ infos.getItem_Name() + " 单价 " + infos.getItem_Money() + "金币， "
+													+ infos.getItem_Point() + "点券 -- 卖家 " + infos.getPlayer_Name());
+									/* 将物品发送到背包 */
+									player.getInventory().addItem(mojangson);
+								}
 							}
 						}
 						/* 关闭背包界面 */
 						player.closeInventory();
 					}
 				}));
+	}
+
+	private double getBrokerage(int brokerage) {
+		double temp = brokerage;
+		return (100 - temp) / 100;
 	}
 
 	/* 金币购买逻辑 */
@@ -203,74 +245,77 @@ public class BuyItemGui extends VexGui {
 			return false;
 		}
 		/* 物品的总价 */
-		int sum = (int) (infos.getItem_Money() * sl * count);
+		int sum = (int) (infos.getItem_Money() * sl * count * getBrokerage(Main.brokerage));
 		/* 如果买家金币数大于等于物品价格 或 (玩家名与UUID 与 数据库中的商品上架玩家保持一致) */
 		if (VaultApi.hasMoney(player, sum) || (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
 				&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString()))) {
 			/* 如果该物品，既需要金币又需要点券，则让后面处理 */
-			if (infos.getItem_Point() <= 0) {
-				/* 数据存储方式 */
-				if (Main.DataSaveType.equalsIgnoreCase("mysql")) {
-					/* 数据库删除物品 */
-					if (ShopItemManager.BuyItems(infos, sl)) {
-						/* 如果玩家名与UUID 与数据库中的商品上架玩家保持一致，则直接获得物品 */
-						if (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
-								&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString())) {
+			if (Main.isPoint) {
+				if (!(infos.getItem_Point() <= 0)) {
+					return false;
+				}
+			}
+			/* 数据存储方式 */
+			if (Main.DataSaveType.equalsIgnoreCase("mysql")) {
+				/* 数据库删除物品 */
+				if (ShopItemManager.BuyItems(infos, sl)) {
+					/* 如果玩家名与UUID 与数据库中的商品上架玩家保持一致，则直接获得物品 */
+					if (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
+							&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString())) {
+						return true;
+					}
+					/* 扣款成功！ */
+					if (VaultApi.takeMoney(player, sum)) {
+						/* 添加金币成功！ */
+						if (VaultApi.giveMoney(Utils.loadPlayer(UUID.fromString(infos.getPlayer_UUID())), sum)) {
 							return true;
-						}
-						/* 扣款成功！ */
-						if (VaultApi.takeMoney(player, sum)) {
-							/* 添加金币成功！ */
-							if (VaultApi.giveMoney(Utils.loadPlayer(UUID.fromString(infos.getPlayer_UUID())), sum)) {
-								return true;
-							} else {
-								/* 将钱还给玩家 */
-								VaultApi.giveMoney(player, sum);
-								/* 物品重新上架 */
-								ShopItemManager.BuyItems_2(infos);
-								Utils.sendMsg(player, "§c§l 付款失败，请稍后重试！");
-							}
 						} else {
+							/* 将钱还给玩家 */
+							VaultApi.giveMoney(player, sum);
 							/* 物品重新上架 */
 							ShopItemManager.BuyItems_2(infos);
-							Utils.sendMsg(player, "§c§l 扣款失败，请稍后重试！");
+							Utils.sendMsg(player, "§c§l 付款失败，请稍后重试！");
 						}
 					} else {
-						VaultApi.giveMoney(player, sum);
-						Utils.sendMsg(player, "§c§l 数据库出错，请联系作者！");
+						/* 物品重新上架 */
+						ShopItemManager.BuyItems_2(infos);
+						Utils.sendMsg(player, "§c§l 扣款失败，请稍后重试！");
 					}
 				} else {
-					/* 数据库删除物品 */
-					if (SQLManager.BuyItems(infos, sl)) {
-						/* 如果玩家名与UUID 与数据库中的商品上架玩家保持一致，则直接获得物品 */
-						if (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
-								&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString())) {
+					VaultApi.giveMoney(player, sum);
+					Utils.sendMsg(player, "§c§l 数据库出错，请联系作者！");
+				}
+			} else {
+				/* 数据库删除物品 */
+				if (SQLManager.BuyItems(infos, sl)) {
+					/* 如果玩家名与UUID 与数据库中的商品上架玩家保持一致，则直接获得物品 */
+					if (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
+							&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString())) {
+						return true;
+					}
+					/* 扣款成功！ */
+					if (VaultApi.takeMoney(player, sum)) {
+						/* 添加金币成功！ */
+						if (VaultApi.giveMoney(Utils.loadPlayer(UUID.fromString(infos.getPlayer_UUID())), sum)) {
 							return true;
-						}
-						/* 扣款成功！ */
-						if (VaultApi.takeMoney(player, sum)) {
-							/* 添加金币成功！ */
-							if (VaultApi.giveMoney(Utils.loadPlayer(UUID.fromString(infos.getPlayer_UUID())), sum)) {
-								return true;
-							} else {
-								/* 将钱还给玩家 */
-								VaultApi.giveMoney(player, sum);
-								/* 物品重新上架 */
-								SQLManager.BuyItems_2(infos);
-								Utils.sendMsg(player, "§c§l 付款失败，请稍后重试！");
-							}
 						} else {
+							/* 将钱还给玩家 */
+							VaultApi.giveMoney(player, sum);
 							/* 物品重新上架 */
 							SQLManager.BuyItems_2(infos);
-							Utils.sendMsg(player, "§c§l 扣款失败，请稍后重试！");
+							Utils.sendMsg(player, "§c§l 付款失败，请稍后重试！");
 						}
 					} else {
-						VaultApi.giveMoney(player, sum);
-						Utils.sendMsg(player, "§c§l 数据库出错，请联系作者！");
+						/* 物品重新上架 */
+						SQLManager.BuyItems_2(infos);
+						Utils.sendMsg(player, "§c§l 扣款失败，请稍后重试！");
 					}
+				} else {
+					VaultApi.giveMoney(player, sum);
+					Utils.sendMsg(player, "§c§l 数据库出错，请联系作者！");
 				}
-
 			}
+
 		} else {
 			Utils.sendMsg(player, "§c§l 你没有足够的金钱购买！");
 		}
@@ -280,8 +325,8 @@ public class BuyItemGui extends VexGui {
 	/* 点券购买逻辑 */
 	private boolean hasPoint(Player player, ItemInfo infos, int sl) {
 		/* 物品的总价 */
-		int msum = (int) (infos.getItem_Money() * sl * count);
-		int psum = (int) (infos.getItem_Point() * sl * count);
+		int msum = (int) (infos.getItem_Money() * sl * count * getBrokerage(Main.brokerage));
+		int psum = (int) (infos.getItem_Point() * sl * count * getBrokerage(Main.brokerage));
 		/* 如果买家点券数大于物品价格 */
 		if (PointApi.hasPoint(player, psum) || (infos.getPlayer_Name().equalsIgnoreCase(player.getName())
 				&& infos.getPlayer_UUID().equalsIgnoreCase(player.getUniqueId().toString()))) {
