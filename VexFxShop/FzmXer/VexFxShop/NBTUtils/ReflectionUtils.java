@@ -3,7 +3,6 @@ package FzmXer.VexFxShop.NBTUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.apache.commons.lang3.Validate;
 
 public final class ReflectionUtils {
 	 // Prevent accidental construction
@@ -52,7 +51,6 @@ public final class ReflectionUtils {
      * @throws IllegalAccessException    If the desired method cannot be accessed due to certain circumstances
      */
     public static Object invokeMethod(Method method, Object object, Object... arguments) throws InvocationTargetException, IllegalAccessException {
-        Validate.notNull(method);
         Object o;
 
         if (method.isAccessible()) {
@@ -97,7 +95,7 @@ public final class ReflectionUtils {
     public static boolean hasConstructor(Class<?> clazz, Class<?>... parameterTypes) {
         boolean has;
         try {
-            Validate.notNull(clazz).getDeclaredConstructor(parameterTypes);
+            clazz.getDeclaredConstructor(parameterTypes);
             has = true;
         } catch (NoSuchMethodException e) {
             has = false;
@@ -113,8 +111,6 @@ public final class ReflectionUtils {
      * @return return true if the constructor is exist
      */
     public static boolean hasConstructor(Class<?> clazz, ConstructorFilter filter) {
-        Validate.notNull(filter);
-
         boolean has = false;
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         for (Constructor<?> constructor : constructors) {
@@ -150,7 +146,7 @@ public final class ReflectionUtils {
     public static boolean hasMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
         boolean has;
         try {
-            Validate.notNull(clazz).getDeclaredMethod(methodName, parameterTypes);
+            clazz.getDeclaredMethod(methodName, parameterTypes);
             has = true;
         } catch (NoSuchMethodException e) {
             has = false;
@@ -166,8 +162,6 @@ public final class ReflectionUtils {
      * @return return true if the constructor is exist
      */
     public static boolean hasMethod(Class<?> clazz, MethodFilter filter) {
-        Validate.notNull(filter);
-
         boolean has = false;
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {

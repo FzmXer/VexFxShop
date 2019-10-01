@@ -3,7 +3,6 @@ package FzmXer.VexFxShop.NBTUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
@@ -56,7 +55,7 @@ public class NBTUtils {
 	public static boolean hasConstructor(Class<?> clazz, Class<?>... parameterTypes) {
 		boolean has;
 		try {
-			Validate.notNull(clazz).getDeclaredConstructor(parameterTypes);
+			clazz.getDeclaredConstructor(parameterTypes);
 			has = true;
 		} catch (NoSuchMethodException var4) {
 			has = false;
@@ -135,7 +134,6 @@ public class NBTUtils {
 	}
 
 	public static Object getNMSItem(ItemStack itemStack) {
-		Validate.notNull(itemStack);
 		if (asNMSCopyMethod == null) {
 			Class<?> craftItemStack = getOBCClass("inventory.CraftItemStack");
 
@@ -198,6 +196,6 @@ public class NBTUtils {
 
 	public static Object instantiateObject(Constructor<?> constructor, Object... arguments)
 			throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		return Validate.notNull(constructor).newInstance(arguments);
+		return constructor.newInstance(arguments);
 	}
 }
