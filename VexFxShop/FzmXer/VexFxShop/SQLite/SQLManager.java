@@ -31,12 +31,12 @@ public class SQLManager {
 
 	public static Connection getConnection() {
 		try {
-			if (conn == null) {
+			if (conn == null || conn.isClosed()) {
 				conn = DriverManager.getConnection("jdbc:sqlite:plugins/VexFxShop/VexFxShop.db");
 			}
 			return conn;
 		} catch (SQLException e) {
-			Utils.Msg(ChatColor.RED + "连接 SQLite 数据库失败，详细信息：" + e.getErrorCode());
+			Utils.Msg(ChatColor.RED + "连接 SQLite 数据库失败！" + e.getErrorCode());
 		}
 		return null;
 	}
@@ -49,7 +49,7 @@ public class SQLManager {
 			PreparedStatement presta = conn.prepareStatement(sql);
 			return presta.execute();
 		} catch (SQLException e) {
-			Utils.Msg(ChatColor.RED + "创建 " + shopname + " 数据表失败，详细信息：" + e.getErrorCode() + "\n" + e.getMessage());
+			Utils.Msg(ChatColor.RED + "创建 " + shopname + " 数据表失败！");
 		}
 		return false;
 	}
