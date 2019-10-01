@@ -60,14 +60,16 @@ public class Main extends JavaPlugin {
 	public static UpitemData upd;
 	/* BuyItemGui*/
 	public static BuyItemData byd;
+	/* BanLore*/
+	public static Vector<String> banlore;
+	/* 手续费*/
+	public static int brokerage = 5;
+	
+	public static boolean isPoint;
+	
 	
 	@Override
 	public void onEnable() {
-		Utils.saveDefaultConfig(this, "config.yml", "");
-		Utils.saveDefaultConfig(this, "systemshop.yml", "/Gui/");
-		Utils.saveDefaultConfig(this, "playershop.yml", "/Gui/");
-		Utils.saveDefaultConfig(this, "upitem.yml", "/Gui/");
-		Utils.saveDefaultConfig(this, "buyitem.yml", "/Gui/");
 		init();
 		/* 添加统计 */
 		@SuppressWarnings("unused")
@@ -103,9 +105,11 @@ public class Main extends JavaPlugin {
 		}
 
 		if (Bukkit.getPluginManager().isPluginEnabled("PlayerPoints")) {
+			isPoint = true;
 			Utils.Msg("§a [PlayerPoints] 已成功兼容！");
 			PointApi.hookPlayerPoints();
 		} else {
+			isPoint = false;
 			Utils.Msg("§c [PlayerPoints] 未找到此插件！");
 		}
 		/* 读取插件配置 */
@@ -223,6 +227,12 @@ public class Main extends JavaPlugin {
 	}
 
 	public void ReadConfig() {
+		Utils.saveDefaultConfig(this, "config.yml", "");
+		Utils.saveDefaultConfig(this, "banlore.yml", "");
+		Utils.saveDefaultConfig(this, "systemshop.yml", "/Gui/");
+		Utils.saveDefaultConfig(this, "playershop.yml", "/Gui/");
+		Utils.saveDefaultConfig(this, "upitem.yml", "/Gui/");
+		Utils.saveDefaultConfig(this, "buyitem.yml", "/Gui/");
 		this.reloadConfig();
 		DataSaveType = getConfigs("VexFxShop.DataSaveType");
 		/* 读取配置项 */
@@ -231,6 +241,9 @@ public class Main extends JavaPlugin {
 				this.getConfig().getInt("VexFxShop.MySQL.Port"));
 		System_Key = this.getConfig().getInt("VexFxShop.SystemShop");
 		Player_Key = this.getConfig().getInt("VexFxShop.PlayerShop");
+		brokerage = this.getConfig().getInt("VexFxShop.brokerage");
+		Utils.Msg(ChatColor.GREEN + " 当前手续费率为 "+ brokerage +"%");
+		
 		Utils.ReadShopGui();
 	}
 
