@@ -53,12 +53,14 @@ public class ShopGuiData {
 	private int list_list_y;
 	private int list_list_w;
 	private int list_list_h;
+	private int list_list_b;
 	
 	private String list_itembg_image;
 	private int list_itembg_x;
 	private int list_itembg_y;
 	private int list_itembg_w;
 	private int list_itembg_h;
+	private int list_itembg_b;
 	
 	private String list_item_image;
 	private int list_item_x;
@@ -110,6 +112,19 @@ public class ShopGuiData {
 	private int list_itembuy_h;
 	private int list_itembuy_b;
 	
+	
+	public int getList_list_b() {
+		return list_list_b;
+	}
+	public void setList_list_b(int list_list_b) {
+		this.list_list_b = list_list_b;
+	}
+	public int getList_itembg_b() {
+		return list_itembg_b;
+	}
+	public void setList_itembg_b(int list_itembg_b) {
+		this.list_itembg_b = list_itembg_b;
+	}
 	public double getList_itemname_fontsize() {
 		return list_itemname_fontsize;
 	}
