@@ -16,20 +16,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.mojang.authlib.GameProfile;
 
 import FzmXer.VexFxShop.Data.BuyItemData;
 import FzmXer.VexFxShop.Data.ShopGuiData;
 import FzmXer.VexFxShop.Data.UpitemData;
 import FzmXer.VexFxShop.Gui.DialogHub;
 import FzmXer.VexFxShop.Main.Main;
-import net.minecraft.server.v1_12_R1.EntityPlayer;
-import net.minecraft.server.v1_12_R1.MinecraftServer;
-import net.minecraft.server.v1_12_R1.PlayerInteractManager;
 
 public class Utils {
 
@@ -70,6 +64,42 @@ public class Utils {
 				+ " player_name TEXT NOT NULL," + " player_uuid TEXT NOT NULL," + " shop_name TEXT NOT NULL,"
 				+ " item_number INT NOT NULL)";
 		return table;
+	}
+
+	public static void WLog(String gamename, String log) {
+		/* 文件名 */
+		String filename = gamename + ".yml";
+		String path = Main.instance.getDataFolder() + "/Log/";
+		/* 找到文件 */
+		File file = new File(path, filename);
+		/* 找到目录 */
+		int lastIndex = filename.lastIndexOf('/');
+		File dir = new File(path,
+				filename.substring(0, lastIndex >= 0 ? lastIndex : 0));
+		if (!dir.exists()) {// 判断是否存在
+			dir.mkdirs();// 创建目录
+		}
+		
+		if (!file.exists()) {// 如果配置文件不存在
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				Msg("§c[VexFxShop] 创建玩家日志文件失败！");
+			}
+		}
+		
+		log = log + "\n";
+		
+		try {
+			// 打开输出流
+			 FileOutputStream out = new FileOutputStream(path + filename,true);
+			 byte[] data = log.getBytes();
+			 out.write(data);
+			 out.close();
+		} catch (IOException ex) {
+			return;
+		}
+
 	}
 
 	public static void sendMsg(Player player, String text) {
@@ -175,24 +205,15 @@ public class Utils {
 	 * 使用UUID获取玩家
 	 * 
 	 * @param uuid 玩家的UUID
-	 * @return Player
+	 * @return Player 返回玩家实体
 	 */
-	public static Player loadPlayer(UUID uuid) {
+	public static OfflinePlayer loadPlayer(UUID uuid) {
 		try {
 			OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 			if (player == null || !player.hasPlayedBefore()) {
 				return null;
 			}
-
-			GameProfile profile = new GameProfile(uuid, player.getName());
-			MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-			EntityPlayer entity = new EntityPlayer(server, server.getWorldServer(0), profile,
-					new PlayerInteractManager(server.getWorldServer(0)));
-			Player target = entity.getBukkitEntity();
-			if (target != null) {
-				target.loadData();
-				return target;
-			}
+			return player;
 		} catch (Exception e) {
 			Msg("§c加载离线玩家失败！");
 		}
@@ -204,9 +225,15 @@ public class Utils {
 		ShopGuiData ssgui = new ShopGuiData();
 
 		FileConfiguration config = YamlConfiguration
+				.loadConfiguration(new File(Main.instance.getDataFolder() + "", "banlore.yml"));
+
+		Main.banlore = new Vector<String>();
+		Main.banlore.addAll(config.getStringList("VexFxShop.BanLore"));
+
+		config = YamlConfiguration
 				.loadConfiguration(new File(Main.instance.getDataFolder() + "/Gui/", "systemshop.yml"));
 		/* 背景 */
-		ssgui.setBg_image(config.getString("VexFxShop.SystemShop-bg.image"));
+		ssgui.setBg_image(config.getString("VexFxShop.SystemShop-bg.image").replace("[local]", Path));
 		ssgui.setBg_x(config.getInt("VexFxShop.SystemShop-bg.x"));
 		ssgui.setBg_y(config.getInt("VexFxShop.SystemShop-bg.y"));
 		ssgui.setBg_w(config.getInt("VexFxShop.SystemShop-bg.w"));
@@ -218,14 +245,14 @@ public class Utils {
 		ssgui.setTitle_x(config.getInt("VexFxShop.SystemShop-title.x"));
 		ssgui.setTitle_y(config.getInt("VexFxShop.SystemShop-title.y"));
 		/* 退出按钮 */
-		ssgui.setExit_image1(config.getString("VexFxShop.SystemShop-exit.image1"));
-		ssgui.setExit_image2(config.getString("VexFxShop.SystemShop-exit.image2"));
+		ssgui.setExit_image1(config.getString("VexFxShop.SystemShop-exit.image1").replace("[local]", Path));
+		ssgui.setExit_image2(config.getString("VexFxShop.SystemShop-exit.image2").replace("[local]", Path));
 		ssgui.setExit_x(config.getInt("VexFxShop.SystemShop-exit.x"));
 		ssgui.setExit_y(config.getInt("VexFxShop.SystemShop-exit.y"));
 		ssgui.setExit_w(config.getInt("VexFxShop.SystemShop-exit.w"));
 		ssgui.setExit_h(config.getInt("VexFxShop.SystemShop-exit.h"));
 		/* 信息显示 */
-		ssgui.setInfo_money_image(config.getString("VexFxShop.SystemShop-info.money.image"));
+		ssgui.setInfo_money_image(config.getString("VexFxShop.SystemShop-info.money.image").replace("[local]", Path));
 		ssgui.setInfo_money_x(config.getInt("VexFxShop.SystemShop-info.money.x"));
 		ssgui.setInfo_money_y(config.getInt("VexFxShop.SystemShop-info.money.y"));
 		ssgui.setInfo_money_w(config.getInt("VexFxShop.SystemShop-info.money.w"));
@@ -235,7 +262,7 @@ public class Utils {
 		ssgui.setInfo_money_text_y(config.getInt("VexFxShop.SystemShop-info.money-text.y"));
 		ssgui.setInfo_money_text_fontsize(config.getDouble("VexFxShop.SystemShop-info.money-text.fontsize"));
 		/* 信息显示 */
-		ssgui.setInfo_point_image(config.getString("VexFxShop.SystemShop-info.point.image"));
+		ssgui.setInfo_point_image(config.getString("VexFxShop.SystemShop-info.point.image").replace("[local]", Path));
 		ssgui.setInfo_point_x(config.getInt("VexFxShop.SystemShop-info.point.x"));
 		ssgui.setInfo_point_y(config.getInt("VexFxShop.SystemShop-info.point.y"));
 		ssgui.setInfo_point_w(config.getInt("VexFxShop.SystemShop-info.point.w"));
@@ -246,8 +273,8 @@ public class Utils {
 		ssgui.setInfo_point_text_fontsize(config.getDouble("VexFxShop.SystemShop-info.point-text.fontsize"));
 		/* 上传按钮 */
 		ssgui.setUpitem_text(config.getString("VexFxShop.SystemShop-Upitem.text"));
-		ssgui.setUpitem_image1(config.getString("VexFxShop.SystemShop-Upitem.image1"));
-		ssgui.setUpitem_image2(config.getString("VexFxShop.SystemShop-Upitem.image2"));
+		ssgui.setUpitem_image1(config.getString("VexFxShop.SystemShop-Upitem.image1").replace("[local]", Path));
+		ssgui.setUpitem_image2(config.getString("VexFxShop.SystemShop-Upitem.image2").replace("[local]", Path));
 		ssgui.setUpitem_x(config.getInt("VexFxShop.SystemShop-Upitem.x"));
 		ssgui.setUpitem_y(config.getInt("VexFxShop.SystemShop-Upitem.y"));
 		ssgui.setUpitem_w(config.getInt("VexFxShop.SystemShop-Upitem.w"));
@@ -257,14 +284,18 @@ public class Utils {
 		ssgui.setList_list_y(config.getInt("VexFxShop.SystemShop-list.list.y"));
 		ssgui.setList_list_w(config.getInt("VexFxShop.SystemShop-list.list.w"));
 		ssgui.setList_list_h(config.getInt("VexFxShop.SystemShop-list.list.h"));
+		ssgui.setList_list_b(config.getInt("VexFxShop.SystemShop-list.list.b"));
 		/* 商品背景 */
-		ssgui.setList_itembg_image(config.getString("VexFxShop.SystemShop-list.item-bg.image"));
+		ssgui.setList_itembg_image(
+				config.getString("VexFxShop.SystemShop-list.item-bg.image").replace("[local]", Path));
 		ssgui.setList_itembg_x(config.getInt("VexFxShop.SystemShop-list.item-bg.x"));
 		ssgui.setList_itembg_y(config.getInt("VexFxShop.SystemShop-list.item-bg.y"));
 		ssgui.setList_itembg_w(config.getInt("VexFxShop.SystemShop-list.item-bg.w"));
 		ssgui.setList_itembg_h(config.getInt("VexFxShop.SystemShop-list.item-bg.h"));
+		ssgui.setList_itembg_b(config.getInt("VexFxShop.SystemShop-list.item-bg.b"));
 		/* 贴图 */
-		ssgui.setList_item_image(config.getString("VexFxShop.SystemShop-list.item-image.image"));
+		ssgui.setList_item_image(
+				config.getString("VexFxShop.SystemShop-list.item-image.image").replace("[local]", Path));
 		ssgui.setList_item_x(config.getInt("VexFxShop.SystemShop-list.item-image.x"));
 		ssgui.setList_item_y(config.getInt("VexFxShop.SystemShop-list.item-image.y"));
 		ssgui.setList_item_b(config.getInt("VexFxShop.SystemShop-list.item-image.b"));
@@ -307,8 +338,10 @@ public class Utils {
 		ssgui.setList_itemnumber_fontsize(config.getDouble("VexFxShop.SystemShop-list.item-number.fontsize"));
 		/* 购买按钮 */
 		ssgui.setList_itembuy_text(config.getString("VexFxShop.SystemShop-list.item-buy.text"));
-		ssgui.setList_itembuy_image1(config.getString("VexFxShop.SystemShop-list.item-buy.image1"));
-		ssgui.setList_itembuy_image2(config.getString("VexFxShop.SystemShop-list.item-buy.image2"));
+		ssgui.setList_itembuy_image1(
+				config.getString("VexFxShop.SystemShop-list.item-buy.image1").replace("[local]", Path));
+		ssgui.setList_itembuy_image2(
+				config.getString("VexFxShop.SystemShop-list.item-buy.image2").replace("[local]", Path));
 		ssgui.setList_itembuy_x(config.getInt("VexFxShop.SystemShop-list.item-buy.x"));
 		ssgui.setList_itembuy_y(config.getInt("VexFxShop.SystemShop-list.item-buy.y"));
 		ssgui.setList_itembuy_w(config.getInt("VexFxShop.SystemShop-list.item-buy.w"));
@@ -322,7 +355,7 @@ public class Utils {
 		config = YamlConfiguration
 				.loadConfiguration(new File(Main.instance.getDataFolder() + "/Gui/", "playershop.yml"));
 		/* 背景 */
-		ssgui.setBg_image(config.getString("VexFxShop.PlayerShop-bg.image"));
+		ssgui.setBg_image(config.getString("VexFxShop.PlayerShop-bg.image").replace("[local]", Path));
 		ssgui.setBg_x(config.getInt("VexFxShop.PlayerShop-bg.x"));
 		ssgui.setBg_y(config.getInt("VexFxShop.PlayerShop-bg.y"));
 		ssgui.setBg_w(config.getInt("VexFxShop.PlayerShop-bg.w"));
@@ -334,14 +367,14 @@ public class Utils {
 		ssgui.setTitle_x(config.getInt("VexFxShop.PlayerShop-title.x"));
 		ssgui.setTitle_y(config.getInt("VexFxShop.PlayerShop-title.y"));
 		/* 退出按钮 */
-		ssgui.setExit_image1(config.getString("VexFxShop.PlayerShop-exit.image1"));
-		ssgui.setExit_image2(config.getString("VexFxShop.PlayerShop-exit.image2"));
+		ssgui.setExit_image1(config.getString("VexFxShop.PlayerShop-exit.image1").replace("[local]", Path));
+		ssgui.setExit_image2(config.getString("VexFxShop.PlayerShop-exit.image2").replace("[local]", Path));
 		ssgui.setExit_x(config.getInt("VexFxShop.PlayerShop-exit.x"));
 		ssgui.setExit_y(config.getInt("VexFxShop.PlayerShop-exit.y"));
 		ssgui.setExit_w(config.getInt("VexFxShop.PlayerShop-exit.w"));
 		ssgui.setExit_h(config.getInt("VexFxShop.PlayerShop-exit.h"));
 		/* 信息显示 */
-		ssgui.setInfo_money_image(config.getString("VexFxShop.PlayerShop-info.money.image"));
+		ssgui.setInfo_money_image(config.getString("VexFxShop.PlayerShop-info.money.image").replace("[local]", Path));
 		ssgui.setInfo_money_x(config.getInt("VexFxShop.PlayerShop-info.money.x"));
 		ssgui.setInfo_money_y(config.getInt("VexFxShop.PlayerShop-info.money.y"));
 		ssgui.setInfo_money_w(config.getInt("VexFxShop.PlayerShop-info.money.w"));
@@ -351,7 +384,7 @@ public class Utils {
 		ssgui.setInfo_money_text_y(config.getInt("VexFxShop.PlayerShop-info.money-text.y"));
 		ssgui.setInfo_money_text_fontsize(config.getDouble("VexFxShop.PlayerShop-info.money-text.fontsize"));
 		/* 信息显示 */
-		ssgui.setInfo_point_image(config.getString("VexFxShop.PlayerShop-info.point.image"));
+		ssgui.setInfo_point_image(config.getString("VexFxShop.PlayerShop-info.point.image").replace("[local]", Path));
 		ssgui.setInfo_point_x(config.getInt("VexFxShop.PlayerShop-info.point.x"));
 		ssgui.setInfo_point_y(config.getInt("VexFxShop.PlayerShop-info.point.y"));
 		ssgui.setInfo_point_w(config.getInt("VexFxShop.PlayerShop-info.point.w"));
@@ -362,8 +395,8 @@ public class Utils {
 		ssgui.setInfo_point_text_fontsize(config.getDouble("VexFxShop.PlayerShop-info.point-text.fontsize"));
 		/* 上架按钮 */
 		ssgui.setUpitem_text(config.getString("VexFxShop.PlayerShop-Upitem.text"));
-		ssgui.setUpitem_image1(config.getString("VexFxShop.PlayerShop-Upitem.image1"));
-		ssgui.setUpitem_image2(config.getString("VexFxShop.PlayerShop-Upitem.image2"));
+		ssgui.setUpitem_image1(config.getString("VexFxShop.PlayerShop-Upitem.image1").replace("[local]", Path));
+		ssgui.setUpitem_image2(config.getString("VexFxShop.PlayerShop-Upitem.image2").replace("[local]", Path));
 		ssgui.setUpitem_x(config.getInt("VexFxShop.PlayerShop-Upitem.x"));
 		ssgui.setUpitem_y(config.getInt("VexFxShop.PlayerShop-Upitem.y"));
 		ssgui.setUpitem_w(config.getInt("VexFxShop.PlayerShop-Upitem.w"));
@@ -373,14 +406,18 @@ public class Utils {
 		ssgui.setList_list_y(config.getInt("VexFxShop.PlayerShop-list.list.y"));
 		ssgui.setList_list_w(config.getInt("VexFxShop.PlayerShop-list.list.w"));
 		ssgui.setList_list_h(config.getInt("VexFxShop.PlayerShop-list.list.h"));
+		ssgui.setList_list_b(config.getInt("VexFxShop.PlayerShop-list.list.b"));
 		/* 商品背景 */
-		ssgui.setList_itembg_image(config.getString("VexFxShop.PlayerShop-list.item-bg.image"));
+		ssgui.setList_itembg_image(
+				config.getString("VexFxShop.PlayerShop-list.item-bg.image").replace("[local]", Path));
 		ssgui.setList_itembg_x(config.getInt("VexFxShop.PlayerShop-list.item-bg.x"));
 		ssgui.setList_itembg_y(config.getInt("VexFxShop.PlayerShop-list.item-bg.y"));
 		ssgui.setList_itembg_w(config.getInt("VexFxShop.PlayerShop-list.item-bg.w"));
 		ssgui.setList_itembg_h(config.getInt("VexFxShop.PlayerShop-list.item-bg.h"));
+		ssgui.setList_itembg_b(config.getInt("VexFxShop.PlayerShop-list.item-bg.b"));
 		/* 贴图 */
-		ssgui.setList_item_image(config.getString("VexFxShop.PlayerShop-list.item-image.image"));
+		ssgui.setList_item_image(
+				config.getString("VexFxShop.PlayerShop-list.item-image.image").replace("[local]", Path));
 		ssgui.setList_item_x(config.getInt("VexFxShop.PlayerShop-list.item-image.x"));
 		ssgui.setList_item_y(config.getInt("VexFxShop.PlayerShop-list.item-image.y"));
 		ssgui.setList_item_b(config.getInt("VexFxShop.PlayerShop-list.item-image.b"));
@@ -423,8 +460,10 @@ public class Utils {
 		ssgui.setList_itemnumber_fontsize(config.getDouble("VexFxShop.PlayerShop-list.item-number.fontsize"));
 		/* 购买按钮 */
 		ssgui.setList_itembuy_text(config.getString("VexFxShop.PlayerShop-list.item-buy.text"));
-		ssgui.setList_itembuy_image1(config.getString("VexFxShop.PlayerShop-list.item-buy.image1"));
-		ssgui.setList_itembuy_image2(config.getString("VexFxShop.PlayerShop-list.item-buy.image2"));
+		ssgui.setList_itembuy_image1(
+				config.getString("VexFxShop.PlayerShop-list.item-buy.image1").replace("[local]", Path));
+		ssgui.setList_itembuy_image2(
+				config.getString("VexFxShop.PlayerShop-list.item-buy.image2").replace("[local]", Path));
 		ssgui.setList_itembuy_x(config.getInt("VexFxShop.PlayerShop-list.item-buy.x"));
 		ssgui.setList_itembuy_y(config.getInt("VexFxShop.PlayerShop-list.item-buy.y"));
 		ssgui.setList_itembuy_w(config.getInt("VexFxShop.PlayerShop-list.item-buy.w"));
@@ -432,11 +471,11 @@ public class Utils {
 		ssgui.setList_itembuy_b(config.getInt("VexFxShop.PlayerShop-list.item-buy.b"));
 
 		Main.syshopg.add(ssgui);
-		
+
 		UpitemData ups = new UpitemData();
 		config = YamlConfiguration.loadConfiguration(new File(Main.instance.getDataFolder() + "/Gui/", "upitem.yml"));
 		/* 背景 */
-		ups.setBg_image(config.getString("VexFxShop.Upitem-bg.image"));
+		ups.setBg_image(config.getString("VexFxShop.Upitem-bg.image").replace("[local]", Path));
 		ups.setBg_x(config.getInt("VexFxShop.Upitem-bg.x"));
 		ups.setBg_y(config.getInt("VexFxShop.Upitem-bg.y"));
 		ups.setBg_w(config.getInt("VexFxShop.Upitem-bg.w"));
@@ -451,7 +490,7 @@ public class Utils {
 		/* 单价 */
 		ups.setDj_show_text(config.getString("VexFxShop.Upitem-dj-show.text"));
 		ups.setDj_show_x(config.getInt("VexFxShop.Upitem-dj-show.x"));
-		ups.setDj_show_y(config.getInt("VexFxShop.Upitem-dj-show.x"));
+		ups.setDj_show_y(config.getInt("VexFxShop.Upitem-dj-show.y"));
 		ups.setDj_show_fontsize(config.getDouble("VexFxShop.Upitem-dj-show.fontsize"));
 		/* 输入框 */
 		ups.setInput_x(config.getInt("VexFxShop.Upitem-Input.x"));
@@ -459,8 +498,8 @@ public class Utils {
 		ups.setInput_w(config.getInt("VexFxShop.Upitem-Input.w"));
 		ups.setInput_h(config.getInt("VexFxShop.Upitem-Input.h"));
 		/* 关闭按钮 */
-		ups.setExit_image1(config.getString("VexFxShop.Upitem-exit.image1"));
-		ups.setExit_image2(config.getString("VexFxShop.Upitem-exit.image2"));
+		ups.setExit_image1(config.getString("VexFxShop.Upitem-exit.image1").replace("[local]", Path));
+		ups.setExit_image2(config.getString("VexFxShop.Upitem-exit.image2").replace("[local]", Path));
 		ups.setExit_x(config.getInt("VexFxShop.Upitem-exit.x"));
 		ups.setExit_y(config.getInt("VexFxShop.Upitem-exit.y"));
 		ups.setExit_w(config.getInt("VexFxShop.Upitem-exit.w"));
@@ -471,8 +510,8 @@ public class Utils {
 		ups.setMoney_text_y(config.getInt("VexFxShop.Upitem-money-text.y"));
 		ups.setMoney_text_fontsize(config.getDouble("VexFxShop.Upitem-money-text.fontsize"));
 
-		ups.setMoney_image1(config.getString("VexFxShop.Upitem-money.image1"));
-		ups.setMoney_image2(config.getString("VexFxShop.Upitem-money.image2"));
+		ups.setMoney_image1(config.getString("VexFxShop.Upitem-money.image1").replace("[local]", Path));
+		ups.setMoney_image2(config.getString("VexFxShop.Upitem-money.image2").replace("[local]", Path));
 		ups.setMoney_x(config.getInt("VexFxShop.Upitem-money.x"));
 		ups.setMoney_y(config.getInt("VexFxShop.Upitem-money.y"));
 		ups.setMoney_w(config.getInt("VexFxShop.Upitem-money.w"));
@@ -483,8 +522,8 @@ public class Utils {
 		ups.setPoint_text_y(config.getInt("VexFxShop.Upitem-point-text.y"));
 		ups.setPoint_text_fontsize(config.getDouble("VexFxShop.Upitem-point-text.fontsize"));
 
-		ups.setPoint_image1(config.getString("VexFxShop.Upitem-point.image1"));
-		ups.setPoint_image2(config.getString("VexFxShop.Upitem-point.image2"));
+		ups.setPoint_image1(config.getString("VexFxShop.Upitem-point.image1").replace("[local]", Path));
+		ups.setPoint_image2(config.getString("VexFxShop.Upitem-point.image2").replace("[local]", Path));
 		ups.setPoint_x(config.getInt("VexFxShop.Upitem-point.x"));
 		ups.setPoint_y(config.getInt("VexFxShop.Upitem-point.y"));
 		ups.setPoint_w(config.getInt("VexFxShop.Upitem-point.w"));
@@ -495,16 +534,16 @@ public class Utils {
 		ups.setUn_text_y(config.getInt("VexFxShop.Upitem-un-text.y"));
 		ups.setUn_text_fontsize(config.getDouble("VexFxShop.Upitem-un-text.fontsize"));
 
-		ups.setUn_image1(config.getString("VexFxShop.Upitem-un.image1"));
-		ups.setUn_image2(config.getString("VexFxShop.Upitem-un.image2"));
+		ups.setUn_image1(config.getString("VexFxShop.Upitem-un.image1").replace("[local]", Path));
+		ups.setUn_image2(config.getString("VexFxShop.Upitem-un.image2").replace("[local]", Path));
 		ups.setUn_x(config.getInt("VexFxShop.Upitem-un.x"));
 		ups.setUn_y(config.getInt("VexFxShop.Upitem-un.y"));
 		ups.setUn_w(config.getInt("VexFxShop.Upitem-un.w"));
 		ups.setUn_h(config.getInt("VexFxShop.Upitem-un.h"));
 		/* 上架 */
 		ups.setOk_text(config.getString("VexFxShop.Upitem-ok.text"));
-		ups.setOk_image1(config.getString("VexFxShop.Upitem-ok.image1"));
-		ups.setOk_image2(config.getString("VexFxShop.Upitem-ok.image2"));
+		ups.setOk_image1(config.getString("VexFxShop.Upitem-ok.image1").replace("[local]", Path));
+		ups.setOk_image2(config.getString("VexFxShop.Upitem-ok.image2").replace("[local]", Path));
 		ups.setOk_x(config.getInt("VexFxShop.Upitem-ok.x"));
 		ups.setOk_y(config.getInt("VexFxShop.Upitem-ok.y"));
 		ups.setOk_w(config.getInt("VexFxShop.Upitem-ok.w"));
@@ -515,7 +554,7 @@ public class Utils {
 		BuyItemData bys = new BuyItemData();
 		config = YamlConfiguration.loadConfiguration(new File(Main.instance.getDataFolder() + "/Gui/", "buyitem.yml"));
 
-		bys.setBg_image(config.getString("VexFxShop.Buyitem-bg.image"));
+		bys.setBg_image(config.getString("VexFxShop.Buyitem-bg.image").replace("[local]", Path));
 		bys.setBg_x(config.getInt("VexFxShop.Buyitem-bg.x"));
 		bys.setBg_y(config.getInt("VexFxShop.Buyitem-bg.y"));
 		bys.setBg_w(config.getInt("VexFxShop.Buyitem-bg.w"));
@@ -523,10 +562,10 @@ public class Utils {
 		bys.setBg_xs(config.getInt("VexFxShop.Buyitem-bg.xs"));
 		bys.setBg_ys(config.getInt("VexFxShop.Buyitem-bg.ys"));
 
-		bys.setItemstack_image(config.getString("VexFxShop.Vexitemstack.image"));
+		bys.setItemstack_image(config.getString("VexFxShop.Vexitemstack.image").replace("[local]", Path));
 		bys.setItemstack_h(config.getInt("VexFxShop.Vexitemstack.h"));
 
-		bys.setSlot_image(config.getString("VexFxShop.Buyitem-Slot-image.image"));
+		bys.setSlot_image(config.getString("VexFxShop.Buyitem-Slot-image.image").replace("[local]", Path));
 		bys.setSlot_image_x(config.getInt("VexFxShop.Buyitem-Slot-image.x"));
 		bys.setSlot_image_y(config.getInt("VexFxShop.Buyitem-Slot-image.y"));
 		bys.setSlot_image_w(config.getInt("VexFxShop.Buyitem-Slot-image.w"));
@@ -556,41 +595,41 @@ public class Utils {
 		bys.setPoint_x(config.getInt("VexFxShop.Buyitem-point.x"));
 		bys.setPoint_y(config.getInt("VexFxShop.Buyitem-point.y"));
 		bys.setPoint_fontsize(config.getDouble("VexFxShop.Buyitem-point.fontsize"));
-		
+
 		bys.setBuytext_text(config.getString("VexFxShop.Buyitem-text.text"));
 		bys.setBuytext_x(config.getInt("VexFxShop.Buyitem-text.x"));
 		bys.setBuytext_y(config.getInt("VexFxShop.Buyitem-text.y"));
 		bys.setBuytext_fontsize(config.getDouble("VexFxShop.Buyitem-text.fontsize"));
-		
+
 		bys.setInput_x(config.getInt("VexFxShop.Buyitem-input.x"));
 		bys.setInput_y(config.getInt("VexFxShop.Buyitem-input.y"));
 		bys.setInput_w(config.getInt("VexFxShop.Buyitem-input.w"));
 		bys.setInput_h(config.getInt("VexFxShop.Buyitem-input.h"));
-		
+
 		bys.setBack_text(config.getString("VexFxShop.Buyitem-back.text"));
-		bys.setBack_image1(config.getString("VexFxShop.Buyitem-back.image1"));
-		bys.setBack_image2(config.getString("VexFxShop.Buyitem-back.image2"));
+		bys.setBack_image1(config.getString("VexFxShop.Buyitem-back.image1").replace("[local]", Path));
+		bys.setBack_image2(config.getString("VexFxShop.Buyitem-back.image2").replace("[local]", Path));
 		bys.setBack_x(config.getInt("VexFxShop.Buyitem-back.x"));
 		bys.setBack_y(config.getInt("VexFxShop.Buyitem-back.y"));
 		bys.setBack_w(config.getInt("VexFxShop.Buyitem-back.w"));
 		bys.setBack_h(config.getInt("VexFxShop.Buyitem-back.h"));
-	
+
 		bys.setDown_text(config.getString("VexFxShop.Buyitem-down.text"));
-		bys.setDown_image1(config.getString("VexFxShop.Buyitem-down.image1"));
-		bys.setDown_image2(config.getString("VexFxShop.Buyitem-down.image2"));
+		bys.setDown_image1(config.getString("VexFxShop.Buyitem-down.image1").replace("[local]", Path));
+		bys.setDown_image2(config.getString("VexFxShop.Buyitem-down.image2").replace("[local]", Path));
 		bys.setDown_x(config.getInt("VexFxShop.Buyitem-down.x"));
 		bys.setDown_y(config.getInt("VexFxShop.Buyitem-down.y"));
 		bys.setDown_w(config.getInt("VexFxShop.Buyitem-down.w"));
 		bys.setDown_h(config.getInt("VexFxShop.Buyitem-down.h"));
-		
+
 		bys.setBuy_text(config.getString("VexFxShop.Buyitem-buy.text"));
-		bys.setBuy_image1(config.getString("VexFxShop.Buyitem-buy.image1"));
-		bys.setBuy_image2(config.getString("VexFxShop.Buyitem-buy.image2"));
+		bys.setBuy_image1(config.getString("VexFxShop.Buyitem-buy.image1").replace("[local]", Path));
+		bys.setBuy_image2(config.getString("VexFxShop.Buyitem-buy.image2").replace("[local]", Path));
 		bys.setBuy_x(config.getInt("VexFxShop.Buyitem-buy.x"));
 		bys.setBuy_y(config.getInt("VexFxShop.Buyitem-buy.y"));
 		bys.setBuy_w(config.getInt("VexFxShop.Buyitem-buy.w"));
 		bys.setBuy_h(config.getInt("VexFxShop.Buyitem-buy.h"));
-		
+
 		Main.byd = bys;
 	}
 
