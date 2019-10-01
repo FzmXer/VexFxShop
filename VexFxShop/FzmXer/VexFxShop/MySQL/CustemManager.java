@@ -95,13 +95,13 @@ public class CustemManager {
 			presta.execute();
 			ResultSet rs = presta.getResultSet();
 			while (rs.next()) {
-				return rs.getString("C_name");
+				return rs.getString("C_name") == e_n ? "null" : rs.getString("C_name");
 			}
 			MySQLManager.closeConnection();
 		} catch (SQLException e) {
 			Utils.Msg(ChatColor.RED + "查询物品名失败！");
 		}
-		return e_n;
+		return "null";
 	}
 
 	public static String QueryItemName_sql(String e_n) {
@@ -114,13 +114,13 @@ public class CustemManager {
 			presta.execute();
 			ResultSet rs = presta.getResultSet();
 			while (rs.next()) {
-				return rs.getString("C_name");
+				return rs.getString("C_name") == e_n ? "null" : rs.getString("C_name");
 			}
 			MySQLManager.closeConnection();
 		} catch (SQLException e) {
 			Utils.Msg(ChatColor.RED + "查询物品名失败！");
 		}
-		return e_n;
+		return "null";
 	}
 	
 	public static String UpdateItemNmae(String e_n, String c_n) {

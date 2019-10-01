@@ -51,7 +51,7 @@ public class ShopItemManager {
 
 			presta.setInt(13, infos.getItem_Number());
 
-			presta.execute();
+			presta.executeUpdate();
 			return true;
 		} catch (SQLException e) {
 			Utils.Msg(ChatColor.RED + "添加商品失败，详细信息：" + e.getErrorCode());
@@ -69,7 +69,7 @@ public class ShopItemManager {
 					+ "'and player_uuid='" + infos.getPlayer_UUID() + "'";
 			/* 预处理sql语句 */
 			PreparedStatement presta = conn.prepareStatement(sql);
-			presta.execute();
+			presta.executeUpdate();
 			ResultSet rs = presta.getResultSet();
 			while (rs.next()) {
 				if (rs.getInt("item_number") - BuyNumber <= 0) {
@@ -82,7 +82,7 @@ public class ShopItemManager {
 							+ "' where id=" + rs.getInt("id") + "";
 					/* 预处理sql语句 */
 					presta = conn.prepareStatement(sql);
-					presta.execute();
+					presta.executeUpdate();
 					/* 重载商品链表 */
 					Main.reloadItemInfo(infos.getShop_Name());
 					return true;
@@ -104,7 +104,7 @@ public class ShopItemManager {
 					+ "'and player_uuid='" + infos.getPlayer_UUID() + "'";
 			/* 预处理sql语句 */
 			PreparedStatement presta = conn.prepareStatement(sql);
-			presta.execute();
+			presta.executeUpdate();
 			ResultSet rs = presta.getResultSet();
 			while (rs.next()) {
 				return DelItems(rs.getInt("id"), infos.getShop_Name());
@@ -125,14 +125,14 @@ public class ShopItemManager {
 					+ "'and player_uuid='" + infos.getPlayer_UUID() + "'";
 			/* 预处理sql语句 */
 			PreparedStatement presta = conn.prepareStatement(sql);
-			presta.execute();
+			presta.executeUpdate();
 			ResultSet rs = presta.getResultSet();
 			while (rs.next()) {
 				sql = "UPDATE " + infos.getShop_Name() + " SET item_number='" + infos.getItem_Number() + "' where id="
 						+ rs.getInt("id") + "";
 				/* 预处理sql语句 */
 				presta = conn.prepareStatement(sql);
-				presta.execute();
+				presta.executeUpdate();
 				/* 重载商品链表 */
 				Main.reloadItemInfo(infos.getShop_Name());
 				return true;
@@ -156,7 +156,7 @@ public class ShopItemManager {
 			PreparedStatement presta = conn.prepareStatement(sql);
 			presta.setInt(1, id);
 			/* 执行SQL语句，实现数据删除 */
-			presta.execute();
+			presta.executeUpdate();
 			/* 重载商品链表 */
 			Main.reloadItemInfo(shopname);
 			MySQLManager.closeConnection();
@@ -176,7 +176,7 @@ public class ShopItemManager {
 			String sql = "SELECT * FROM " + shopname;
 			/* 预处理sql语句 */
 			PreparedStatement presta = conn.prepareStatement(sql);
-			presta.execute();
+			presta.executeUpdate();
 			ResultSet rs = presta.getResultSet();
 			int x = 0;
 			// 遍历结果集数据库
