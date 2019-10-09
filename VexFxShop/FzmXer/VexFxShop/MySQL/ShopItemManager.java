@@ -176,7 +176,7 @@ public class ShopItemManager {
 			String sql = "SELECT * FROM " + shopname;
 			/* 预处理sql语句 */
 			PreparedStatement presta = conn.prepareStatement(sql);
-			presta.executeUpdate();
+			presta.executeQuery();
 			ResultSet rs = presta.getResultSet();
 			int x = 0;
 			// 遍历结果集数据库
@@ -199,11 +199,12 @@ public class ShopItemManager {
 				info.setItem_Number(rs.getInt("item_number"));
 
 				datas.add(info);
+				x++;
 			}
 			MySQLManager.closeConnection();
 			return datas;
 		} catch (SQLException e) {
-			Utils.Msg(ChatColor.RED + "读取商品信息失败！");
+			Utils.Msg(ChatColor.RED + "读取商品信息失败！  " + e.getMessage());
 		}
 		return null;
 	}
