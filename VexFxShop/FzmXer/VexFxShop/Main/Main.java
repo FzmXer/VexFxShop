@@ -128,7 +128,7 @@ public class Main extends JavaPlugin {
 			}
 			ReadItemInfo();
 
-		} else if (DataSaveType.equalsIgnoreCase("sqlite")) {
+		} else {
 			if (sqlite == null) {
 				sqlite = new SQLManager();
 				/* 创建自定义物品名表 */
